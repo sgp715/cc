@@ -2,7 +2,6 @@ import json
 from twilio.rest import TwilioRestClient
 
 
-
 def send_sms(message, recipient):
 
     with open('./creds.json') as f:
