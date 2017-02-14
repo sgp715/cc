@@ -44,7 +44,7 @@ for listing in listings:
     except:
         print "Couldn't find price"
         print link
-        price = None
+        price = ''
 
     try:
         car_label = info[0].text.strip('\n')
