@@ -90,14 +90,16 @@ for listing in listings:
         good_ones["prices"].append(price)
 
 
+# try to read and update old ones if exists
 store = "cars_stuff"
-olds = pd.read_pickle(store)
+
+try:
+    olds = pd.read_pickle(store)
+    # remove repeat links
+    good_ones = good_ones[good_ones.links != olds.links]
 
 good_ones = pd.DataFrame(good_ones)
 good_ones.to_pickle(store)
-
-# remove repeat links
-# good_ones = good_ones[good_ones.links != olds.links]
 
 if good_ones.count <= 0:
     print "No new cars to talk about :("
