@@ -1,18 +1,18 @@
+import csv
+
 def read_links(file_path):
 
     links = []
     with open(file_path, 'r') as f:
-        l = f.readline()
-        while l:
-            links.append(l[:-1])
-            l = f.readline()
+        r = csv.reader(f)
+        for row in r:
+            links.append(row)
 
     return links
 
 def save_links(file_path, links):
 
     with open(file_path, 'w') as f:
-        f.seek(0)
-        f.truncate()
+        w = csv.writer(f)
         for l in links:
-            f.write("%s\n" % l)
+            w.writerow(l)

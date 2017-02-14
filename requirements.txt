@@ -1,2 +1,3 @@
 python-craigslist
 beautifulsoup4
+pandas

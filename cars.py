@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import utils
 import mail
+import pandas as pd
 
 # get the configurations
 with open('./config.json') as f:
@@ -12,7 +13,7 @@ with open('./config.json') as f:
 # get all of the cars on the page
 base_url = "https://" + config["site"] + ".craigslist.org"
 
-search = "/search/cta"
+search = "/search/cto"
 html = requests.get(base_url + search).text
 soup = BeautifulSoup(html, "html.parser")
 listings = soup.find_all("li", { "class" : "result-row" })
@@ -30,7 +31,7 @@ tags_list = ["cylinders",
         "size"]
 
 # iterate through here and find the ones we wanna send
-good_links = []
+good_ones = {"car_labels":[], "links":[], "prices": []}
 for listing in listings:
 
     link = base_url + listing.a["href"]
@@ -39,8 +40,15 @@ for listing in listings:
     info = soup.find_all("p",{"class":"attrgroup"})
 
     try:
-        car_label = info[0].text.split(' ')
-        year = car_label[0]
+        price = soup.find_all("span", {"class":"price"})[0].text
+    except:
+        print "Couldn't find price"
+        print link
+        price = None
+
+    try:
+        car_label = info[0].text.strip('\n')
+        year = car_label.split(' ')[0]
         if int(year) < 1996:
             continue
         tags = str(info[1].text).split('\n')
@@ -62,31 +70,46 @@ for listing in listings:
         if key == "title status":
             if val.strip() != "clean":
                 send = False
+                break
 
         if key == "transmission":
             if val != "automatic":
                 send = False
+                break
 
         if key == "odometer":
             if int(val) > 200000:
                 send = False
+                break
 
     if send:
-        good_links.append(link)
+        good_ones["car_labels"].append(car_label)
+        good_ones["links"].append(link)
+        good_ones["prices"].append(price)
 
-old_links = utils.read_links("links")
-utils.save_links("links", good_links)
-ones_to_send = list(set(good_links) - set(old_links))
 
-if len(ones_to_send) <= 0:
+store = "cars_stuff"
+#olds = pd.read_pickle(store)
+
+good_ones = pd.DataFrame(good_ones)
+good_ones.to_pickle(store)
+
+# remove repeat links
+# good_ones = good_ones[good_ones.links != olds.links]
+
+if good_ones.count <= 0:
     print "No new cars to talk about :("
     exit()
-message = "These ones have some potential ;)\n\n"
-for l in ones_to_send:
-    message += (l + '\n')
+
+for index, row in good_ones.iterrows():
+    subject = row["car_labels"] + ' - ' + row["prices"]
+    message = row["links"]
+    print "Sending email..."
+    print "subject: " + subject
+    print "message: " + message
+    mail.send_email(subject, message)
+    break
 
 # send email
-mail.send_email(message, "7sebastianperez@gmail.com")
-
-print "SENT:"
-print message
+# do some kind of mapping
+# mail.send_email(subject, message)
