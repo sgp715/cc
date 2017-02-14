@@ -91,7 +91,7 @@ for listing in listings:
 
 
 store = "cars_stuff"
-#olds = pd.read_pickle(store)
+olds = pd.read_pickle(store)
 
 good_ones = pd.DataFrame(good_ones)
 good_ones.to_pickle(store)
