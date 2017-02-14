@@ -98,12 +98,13 @@ try:
     # remove repeat links
     good_ones = good_ones[good_ones.links != olds.links]
 except:
-    print "No saved data"
+    print "No saved data..."
+
 
 good_ones = pd.DataFrame(good_ones)
 good_ones.to_pickle(store)
 
-if good_ones.count <= 0:
+if len(good_ones) <= 0:
     print "No new cars to talk about :("
     exit()
 
