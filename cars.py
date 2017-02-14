@@ -54,7 +54,9 @@ for listing in listings:
         tags = str(info[1].text).split('\n')
     except:
         print "Could not parse -> " + link
-        good_links.append(link)
+        good_ones["car_labels"].append(None)
+        good_ones["links"].append(link)
+        good_ones["prices"].append(None)
         continue
 
     send = True
