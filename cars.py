@@ -97,6 +97,8 @@ try:
     olds = pd.read_pickle(store)
     # remove repeat links
     good_ones = good_ones[good_ones.links != olds.links]
+except:
+    print "No saved data"
 
 good_ones = pd.DataFrame(good_ones)
 good_ones.to_pickle(store)
