@@ -108,7 +108,7 @@ for index, row in good_ones.iterrows():
     print "subject: " + subject
     print "message: " + message
     mail.send_email(subject, message)
-    break
+    #break
 
 # send email
 # do some kind of mapping
