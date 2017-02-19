@@ -1,0 +1,6 @@
+{
+    "site":"Seattle",
+    "from":"sendemail@gmail.com",
+    "pass":"password",
+    "to":"toemail@gmail.com"
+}
